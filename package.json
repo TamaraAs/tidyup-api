@@ -8,6 +8,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon -e ts --watch 'src/**/*.ts' --exec 'ts-node src/index.ts'",
+    "prebuild": "tslint --project tsconfig.json",
     "build": "tsc",
     "start": "node dist/index.js"
   },
