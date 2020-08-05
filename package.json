@@ -1,0 +1,26 @@
+{
+  "name": "organizador-api",
+  "version": "1.0.0",
+  "description": "Api rest para gestionar la organizacion de las cosas guardadas en casa",
+  "main": "index.js",
+  "scripts": {
+    "dev": "",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [
+    "express",
+    "api",
+    "organizar",
+    "casa"
+  ],
+  "author": "Cristian Mateos López",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.7",
+    "@types/express": "^4.17.7"
+  }
+}
