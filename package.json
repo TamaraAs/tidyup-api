@@ -2,6 +2,9 @@
   "name": "organizador-api",
   "version": "1.0.0",
   "description": "Api rest para gestionar la organizacion de las cosas guardadas en casa",
+  "repository": {
+    "url": "git@gitlab.com:mateos.c19/organizador-api.git"
+  },
   "main": "index.js",
   "scripts": {
     "dev": "",
