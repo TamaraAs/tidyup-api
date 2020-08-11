@@ -2,4 +2,17 @@ openapi: "3.0.0"
 info:
   title: Tidy up api rest
   version: v1
-paths: {}
+paths:
+  /boxes:
+    get:
+      summary: Listar cajas.
+      responses:
+        '200':
+          description: Lista de cajas creadas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    
