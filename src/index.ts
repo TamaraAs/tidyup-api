@@ -1,11 +1,13 @@
 import express from 'express';
 import Logger from './loaders/logger';
 import setupExpress from './loaders/express';
+import setupMongoose from './loaders/mongoose';
 
 async function start() {
   const port = 3000;
   const server = express();
 
+  setupMongoose();
   setupExpress(server);
 
   server.listen(port, (error) => {

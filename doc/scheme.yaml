@@ -2,10 +2,19 @@ openapi: "3.0.0"
 info:
   title: Tidy up api rest
   version: v1
+tags:
+  - name: boxes
+    description: Operaciones sobre las cajas de almacenamiento.
+x-tagGroups:
+  - name: Core resources
+    tags:
+      - boxes
 paths:
   /boxes:
     get:
       summary: Listar cajas.
+      tags:
+        - boxes
       responses:
         '200':
           description: Lista de cajas creadas.
