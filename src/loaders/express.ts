@@ -11,7 +11,15 @@ const routeStatusEndpoints = (server: Application): void => {
   });
 };
 
+const setupNotFoundError = (server: Application): void => {
+  server.use((_, response) => {
+    response.status(404).send();
+  });
+};
+
 export default (server: Application): void => {
   routeStatusEndpoints(server);
   routeApiEndpoints(server);
+
+  setupNotFoundError(server);
 };
