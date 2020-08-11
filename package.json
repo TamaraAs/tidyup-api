@@ -1,5 +1,5 @@
 {
-  "name": "organizador-api",
+  "name": "tidyup-api",
   "version": "1.0.0",
   "description": "Api rest para gestionar la organizacion de las cosas guardadas en casa",
   "repository": {
@@ -14,8 +14,8 @@
   "keywords": [
     "express",
     "api",
-    "organizar",
-    "casa"
+    "tidy up",
+    "home"
   ],
   "author": "Cristian Mateos López",
   "license": "ISC",

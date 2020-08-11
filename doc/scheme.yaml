@@ -1,0 +1,5 @@
+openapi: "3.0.0"
+info:
+  title: Tidy up api rest
+  version: v1
+paths: {}
