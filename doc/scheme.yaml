@@ -1,10 +1,11 @@
 openapi: "3.0.0"
 info:
-  title: Tidy up api rest
+  title: Tidyup api rest
   version: v1
 tags:
   - name: boxes
-    description: Operaciones sobre las cajas de almacenamiento.
+    description: |
+      Es el objeto que representa el elemento de almacenamiento del sistema. De cada uno puedes obtener los diferentes items que almacena.
 x-tagGroups:
   - name: Core resources
     tags:
@@ -12,16 +13,36 @@ x-tagGroups:
 paths:
   /boxes:
     get:
-      summary: Listar cajas.
       tags:
         - boxes
+      summary: Buscar cajas
+      description: Obtiene las distintas cajas del sistema.
+      operationId: searchBoxes
       responses:
         '200':
-          description: Lista de cajas creadas.
+          description: Operacion correcta
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: string
-    
+                  $ref: '#/components/schemas/Box'
+      x-codeSamples:
+        - lang: cURL
+          source: |
+            curl http://localhost:3000/v1/boxes
+
+components:
+  schemas:
+    Id:
+      type: integer
+      format: int64
+      readOnly: true
+      example: 1
+    Box:
+      type: object
+      properties:
+        id:
+          description: Box ID
+          allOf:
+            - $ref: '#/components/schemas/Id'

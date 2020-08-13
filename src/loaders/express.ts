@@ -1,5 +1,5 @@
 import { Application } from 'express';
-import routeApiEndpoints from '../api/router';
+import routeApiEndpoints from '../routes/box-route';
 
 const routeStatusEndpoints = (server: Application): void => {
   server.get('/status', (_, response) => {
