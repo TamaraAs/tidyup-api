@@ -28,7 +28,8 @@ export class BoxController implements RegistrableController {
 
   public async create(request: Request, response: Response, next: NextFunction): Promise<void> {
     try {
-      const box = await this.boxService.create();
+      const { body } = request;
+      const box = await this.boxService.create(body);
       response.status(201).json(box);
     } catch (error) {
       next(error);

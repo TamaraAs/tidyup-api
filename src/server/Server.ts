@@ -1,5 +1,6 @@
 import { injectable, inject, multiInject } from 'inversify';
 import { Application, Request, Response, NextFunction } from 'express';
+import bodyParser from 'body-parser';
 import TYPES from '../types';
 import { logger } from '../utils/Logger';
 import { RegistrableController } from '../controllers/RegistrableController';
@@ -21,6 +22,8 @@ export class Server {
   }
 
   private static build(expressApplication: Application, controllers: RegistrableController[]): void {
+    expressApplication.use(bodyParser.json());
+
     controllers.forEach((controller) => controller.register(expressApplication));
 
     expressApplication.use((error: Error, request: Request, response: Response, next: NextFunction) => {

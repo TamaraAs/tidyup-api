@@ -6,7 +6,7 @@ import { DBClient } from '../utils/DBClient';
 
 export interface BoxRepository {
   findAll(): Promise<BoxDTO[]>;
-  save(): Promise<BoxDTO>;
+  save(doc: BoxDTO): Promise<BoxDTO>;
   findById(id: string): Promise<BoxDTO>;
 }
 
@@ -29,9 +29,9 @@ export class MongooseBoxRepository implements BoxRepository {
     });
   }
 
-  public async save(): Promise<BoxDTO> {
+  public async save(doc: BoxDTO): Promise<BoxDTO> {
     return new Promise((resolve, reject) => {
-      const instance = new this.model();
+      const instance = new this.model(doc);
       instance.save((error, response) => {
         if (error) {
           reject(error);

@@ -2,11 +2,11 @@ import { injectable, inject } from 'inversify';
 import { Box } from '../models/Box';
 import { BoxRepository } from '../repositories/BoxRepository';
 import TYPES from '../types';
-import { BoxDTO } from '../models/BoxSchema';
+import { BoxDTO, BoxModel } from '../models/BoxSchema';
 
 export interface BoxService {
   getBoxes(): Promise<Box[]>;
-  create(): Promise<Box>;
+  create(box: Box): Promise<Box>;
   findById(id: string): Promise<Box>;
 }
 
@@ -19,8 +19,8 @@ export class DefaultBoxService implements BoxService {
     return dtos.map((dto) => this.toBox(dto));
   }
 
-  public async create(): Promise<Box> {
-    const dto = await this.boxRepository.save();
+  public async create(box: Box): Promise<Box> {
+    const dto = await this.boxRepository.save(this.toBoxDTO(box));
     return this.toBox(dto);
   }
 
@@ -30,6 +30,11 @@ export class DefaultBoxService implements BoxService {
   }
 
   private toBox(dto: BoxDTO): Box {
-    return new Box(dto._id.toString());
+    return new Box(dto._id.toString(), dto.name);
+  }
+
+  private toBoxDTO(box: Box): BoxDTO {
+    const dto = new BoxModel(box);
+    return dto;
   }
 }
