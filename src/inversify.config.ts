@@ -5,10 +5,13 @@ import { RegistrableController } from './controllers/RegistrableController';
 import { BoxController } from './controllers/BoxController';
 import { BoxRepository, MongooseBoxRepository } from './repositories/BoxRepository';
 import { BoxService, DefaultBoxService } from './services/BoxService';
+import { Server } from './server/Server';
 
 export default new ContainerModule((bind) => {
-  bind<RegistrableController>(TYPES.Controller).to(BoxController);
+  bind<Server>(TYPES.Server).to(Server).inSingletonScope();
 
-  bind<BoxService>(TYPES.BoxService).to(DefaultBoxService);
-  bind<BoxRepository>(TYPES.BoxRepository).to(MongooseBoxRepository);
+  bind<RegistrableController>(TYPES.Controller).to(BoxController).inSingletonScope();
+
+  bind<BoxService>(TYPES.BoxService).to(DefaultBoxService).inSingletonScope();
+  bind<BoxRepository>(TYPES.BoxRepository).to(MongooseBoxRepository).inSingletonScope();
 });
