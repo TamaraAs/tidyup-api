@@ -1,7 +1,7 @@
 export class Box {
-  constructor(private id: number) {}
+  constructor(private id: string) {}
 
-  public getId(): number {
+  public getId(): string {
     return this.id;
   }
 }

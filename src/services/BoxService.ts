@@ -30,6 +30,6 @@ export class DefaultBoxService implements BoxService {
   }
 
   private toBox(dto: BoxDTO): Box {
-    return new Box(dto._id);
+    return new Box(dto._id.toString());
   }
 }

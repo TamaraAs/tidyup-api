@@ -3,6 +3,7 @@ import { injectable, inject } from 'inversify';
 import { RegistrableController } from './RegistrableController';
 import { BoxService } from '../services/BoxService';
 import TYPES from '../types';
+import { toBuffer } from 'qrcode';
 
 @injectable()
 export class BoxController implements RegistrableController {
@@ -36,9 +37,17 @@ export class BoxController implements RegistrableController {
 
   public async getById(request: Request, response: Response, next: NextFunction): Promise<void> {
     try {
-      const id = request.param('id');
+      const contentType: string = request.headers['content-type'];
+      const { id } = request.params;
       const box = await this.boxService.findById(id);
-      response.status(200).json(box);
+      if (contentType === 'application/json') {
+        response.status(200).json(box);
+      } else if (contentType === 'image/png') {
+        const qrcode = await toBuffer(box.getId());
+        response.end(qrcode);
+      } else {
+        response.status(415).send();
+      }
     } catch (error) {
       next(error);
     }
