@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "lib": ["es6"],
-    "types": ["reflect-metadata"],
+    "lib": ["es6", "DOM"],
+    "types": ["reflect-metadata", "jest"],
     "module": "commonjs",
-    "rootDir": "./src",
+    "rootDirs": ["./src", "./test"],
     "outDir": "./dist",
     "moduleResolution": "node",
     "esModuleInterop": true,
