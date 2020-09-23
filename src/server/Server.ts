@@ -1,39 +1,47 @@
-import { injectable, inject, multiInject } from 'inversify';
-import { Application, Request, Response, NextFunction } from 'express';
-import bodyParser from 'body-parser';
-import TYPES from '../types';
-import { logger } from '../utils/Logger';
-import { RegistrableController } from '../controllers/RegistrableController';
+import express, { Application, Router } from 'express';
+import { Container } from 'inversify';
+import { METADATA_KEY, TYPE } from './constants';
 
-@injectable()
 export class Server {
-  constructor(
-    @inject(TYPES.ExpressApplication) private expressApplication: Application,
-    @multiInject(TYPES.Controller) private controllers: RegistrableController[]
-  ) {
-    Server.build(expressApplication, controllers);
+  private container: Container;
+  private router: Router;
+  private app: Application;
+
+  public constructor() {
+    this.app = express();
+    this.router = Router();
+    this.container = new Container();
   }
 
-  public run(): void {
-    const port = 3000;
-    this.expressApplication.listen(port, () => {
-      logger.info(`Server listening on port ${port}`);
-    });
+  public build(): Application {
+    this.registerControllers();
+
+    return this.app;
   }
 
-  private static build(expressApplication: Application, controllers: RegistrableController[]): void {
-    expressApplication.use(bodyParser.json());
+  private registerControllers(): void {
+    const constructors = Reflect.getMetadata(METADATA_KEY.controller, Reflect) || [];
 
-    controllers.forEach((controller) => controller.register(expressApplication));
+    constructors
+      .map((constructor) => constructor.target)
+      .forEach((constructor) => {
+        const name = constructor.name;
 
-    expressApplication.use((error: Error, request: Request, response: Response, next: NextFunction) => {
-      logger.error(error.stack);
-      response.status(500).send('Internal Server Error');
-      next(error);
+        this.container.bind(TYPE.Controller).to(constructor).whenTargetNamed(name);
+      });
+
+    const controllers = this.container.getAll(TYPE.Controller);
+    controllers.forEach((controller) => {
+      const controllerMetadata = Reflect.getMetadata(METADATA_KEY.controller, controller.constructor);
+      const methodMetadata = Reflect.getMetadata(METADATA_KEY.controllerMethod, controller.constructor);
+
+      methodMetadata.forEach((metadata) => {
+        this.router[metadata.method](
+          `${controllerMetadata.path}${metadata.path}`,
+          metadata.target[metadata.propertyKey]
+        );
+      });
     });
-
-    expressApplication.use((request: Request, response: Response) => {
-      response.status(404).send();
-    });
+    this.app.use('', this.router);
   }
 }

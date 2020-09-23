@@ -1,8 +1,8 @@
-import { bootstrap } from './server/Bootstrap';
+import 'reflect-metadata';
+import './controllers';
 
-async function runServer() {
-  const server = await bootstrap();
-  server.run();
-}
+import { Server } from './server/Server';
 
-runServer();
+new Server().build().listen(3000, () => {
+  console.log('Arrancado');
+});
