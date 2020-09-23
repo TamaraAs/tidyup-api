@@ -1,8 +1,15 @@
 import { Schema, model, Document, Model } from 'mongoose';
 
-export interface BoxDTO extends Document {
+export interface ItemDTO {
   name: string;
 }
 
-export const BoxSchema = new Schema({ name: String });
+export interface BoxDTO extends Document {
+  name: string;
+  items: ItemDTO[];
+}
+
+export const ItemSchema = new Schema({ name: String });
+export const BoxSchema = new Schema({ name: String, items: [ItemSchema] });
+
 export const BoxModel: Model<BoxDTO> = model('Boxes', BoxSchema);

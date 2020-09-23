@@ -4,6 +4,7 @@ import { RegistrableController } from './RegistrableController';
 import { BoxService } from '../services/BoxService';
 import TYPES from '../types';
 import { toBuffer } from 'qrcode';
+import { Item } from '../models/Item';
 
 @injectable()
 export class BoxController implements RegistrableController {
@@ -15,6 +16,8 @@ export class BoxController implements RegistrableController {
     routeBoxes.post(this.create.bind(this));
     const routeBox: IRoute = app.route('/boxes/:id');
     routeBox.get(this.getById.bind(this));
+    const routeItemBox: IRoute = app.route('/boxes/:id/items');
+    routeItemBox.put(this.putItem.bind(this));
   }
 
   public async getAll(request: Request, response: Response, next: NextFunction): Promise<void> {
@@ -49,6 +52,18 @@ export class BoxController implements RegistrableController {
       } else {
         response.status(415).send();
       }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async putItem(request: Request, response: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = request.params;
+      const body = request.body;
+      const item = new Item(body.name);
+      const box = await this.boxService.addItem(id, item);
+      response.status(201).json(box);
     } catch (error) {
       next(error);
     }
