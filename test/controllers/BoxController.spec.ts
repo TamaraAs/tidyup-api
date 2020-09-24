@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import { NextFunction, Response } from 'express';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { createMockResponse, RequestBuilder } from '../TestUtils';
-import { BoxService } from '../../src/services/BoxService';
+import { BoxService } from '../services/box-service';
 import { BoxController } from '../../src/controllers/BoxController';
 import { Box } from '../../src/models/Box';
 

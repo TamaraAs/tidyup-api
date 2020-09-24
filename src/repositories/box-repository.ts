@@ -1,8 +1,9 @@
 import { Model } from 'mongoose';
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
 import { BoxSchema, BoxDTO } from '../models/BoxSchema';
 import TYPES from '../types';
-import { DBClient } from '../utils/DBClient';
+import { provide } from '../server/decorators';
+import { MongodbClient } from './mongodb-client';
 
 export interface BoxRepository {
   findAll(): Promise<BoxDTO[]>;
@@ -10,17 +11,14 @@ export interface BoxRepository {
   findById(id: string): Promise<BoxDTO>;
 }
 
-@injectable()
+@provide(TYPES.BoxRepository)
 export class MongooseBoxRepository implements BoxRepository {
-  private model: Model<BoxDTO>;
-
-  constructor(@inject(TYPES.DBClient) private dbClient: DBClient) {
-    this.model = dbClient.model('Boxes', BoxSchema);
-  }
+  constructor(@inject(TYPES.DBClient) private mongodbClient: MongodbClient) {}
 
   public async findAll(): Promise<BoxDTO[]> {
+    const model: Model<BoxDTO> = await (await this.mongodbClient.connection()).model('Boxes', BoxSchema);
     return new Promise((resolve, reject) => {
-      this.model.find((error, response) => {
+      model.find((error, response) => {
         if (error) {
           reject(error);
         }
@@ -30,8 +28,9 @@ export class MongooseBoxRepository implements BoxRepository {
   }
 
   public async save(doc: BoxDTO): Promise<BoxDTO> {
+    const model: Model<BoxDTO> = await (await this.mongodbClient.connection()).model('Boxes', BoxSchema);
     return new Promise((resolve, reject) => {
-      const instance = new this.model(doc);
+      const instance = new model(doc);
       instance.save((error, response) => {
         if (error) {
           reject(error);
@@ -42,8 +41,9 @@ export class MongooseBoxRepository implements BoxRepository {
   }
 
   public async findById(id: string): Promise<BoxDTO> {
+    const model: Model<BoxDTO> = await (await this.mongodbClient.connection()).model('Boxes', BoxSchema);
     return new Promise((resolve, reject) => {
-      this.model.findById(id, (error, response) => {
+      model.findById(id, (error, response) => {
         if (error) {
           reject(error);
         }

@@ -1,9 +1,10 @@
-import { injectable, inject } from 'inversify';
+import { inject } from 'inversify';
 import { Box } from '../models/Box';
-import { BoxRepository } from '../repositories/BoxRepository';
+import { BoxRepository } from '../repositories/box-repository';
 import TYPES from '../types';
 import { BoxDTO, BoxModel, ItemDTO } from '../models/BoxSchema';
 import { Item } from '../models/Item';
+import { provide } from '../server/decorators';
 
 export interface BoxService {
   getBoxes(): Promise<Box[]>;
@@ -12,7 +13,7 @@ export interface BoxService {
   addItem(id: string, item: Item): Promise<Box>;
 }
 
-@injectable()
+@provide(TYPES.BoxService)
 export class DefaultBoxService implements BoxService {
   constructor(@inject(TYPES.BoxRepository) private boxRepository: BoxRepository) {}
 
@@ -38,8 +39,12 @@ export class DefaultBoxService implements BoxService {
     return this.toBox(dto);
   }
 
+  private toItem(dto: ItemDTO): Item {
+    return new Item(dto.name);
+  }
+
   private toBox(dto: BoxDTO): Box {
-    return new Box(dto._id.toString(), dto.name);
+    return new Box(dto._id.toString(), dto.name, dto.items.map(this.toItem));
   }
 
   private toItemDTO(item: Item): ItemDTO {

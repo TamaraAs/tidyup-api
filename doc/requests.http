@@ -1,15 +1,26 @@
 GET http://localhost:3000/boxes
-Content-Type: application/json
+Accept: application/json
 ###
 POST http://localhost:3000/boxes
+Accept: application/json
 Content-Type: application/json
+
+{
+  "name": "test"
+}
 ###
-GET http://localhost:3000/boxes/256
+GET http://localhost:3000/boxes/5f4ffca04d73ae3c80613504
+Accept: application/json
+###
+GET http://localhost:3000/boxes/5f4ffca04d73ae3c80613504
+Accept: image/png
+###
+PUT http://localhost:3000/boxes/5f4ffca04d73ae3c80613504/items
+Accept: application/json
 Content-Type: application/json
+
+{
+  "name": "test"
+}
 ###
-GET http://localhost:3000/boxes/256
-Content-Type: image/png
-###
-PUT http://localhost:3000/boxes/256/items
-Content-Type: application/json
-###
+PUT http://localhost:3000/boxes

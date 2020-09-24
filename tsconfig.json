@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "lib": ["es6", "DOM"],
+    "target": "es6",
+    "lib": ["dom"],
     "types": ["reflect-metadata", "jest"],
     "module": "commonjs",
     "rootDirs": ["./src", "./test"],
