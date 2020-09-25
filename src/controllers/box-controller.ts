@@ -1,35 +1,39 @@
 import { Response, Request } from 'express';
 import { inject } from 'inversify';
 import { toBuffer } from 'qrcode';
+import { Box } from '../models/Box';
 import { Item } from '../models/Item';
+import { BaseController } from '../server/base-controller';
 import { controller, httpGet, httpPost, httpPut } from '../server/decorators';
+import { HttpActionResult } from '../server/interfaces';
 import { BoxService } from '../services/box-service';
 import TYPES from '../types';
 
 @controller('/boxes')
-export class BoxController {
-  constructor(@inject(TYPES.BoxService) private boxService: BoxService) {}
+export class BoxController extends BaseController {
+  constructor(@inject(TYPES.BoxService) private boxService: BoxService) {
+    super();
+  }
 
   @httpGet()
-  public async getAll(_: Request, response: Response): Promise<void> {
-    const boxes = await this.boxService.getBoxes();
-    response.status(200).json(boxes);
+  public async getAll(): Promise<Box[]> {
+    return await this.boxService.getBoxes();
   }
 
   @httpPost()
-  public async create(request: Request, response: Response): Promise<void> {
+  public async create(request: Request): Promise<HttpActionResult> {
     const { body } = request;
     const box = await this.boxService.create(body);
-    response.status(201).json(box);
+    return this.created(box);
   }
 
   @httpGet('/:id')
-  public async getById(request: Request, response: Response): Promise<void> {
+  public async getById(request: Request, response: Response): Promise<HttpActionResult | void> {
     const accept: string = request.headers['accept'];
     const { id } = request.params;
     const box = await this.boxService.findById(id);
     if (accept === 'application/json') {
-      response.status(200).json(box);
+      return this.ok(box);
     } else if (accept === 'image/png') {
       const qrcode = await toBuffer(box.getId());
       response.end(qrcode);
@@ -39,11 +43,11 @@ export class BoxController {
   }
 
   @httpPut('/:id/items')
-  public async putItem(request: Request, response: Response): Promise<void> {
+  public async putItem(request: Request): Promise<HttpActionResult> {
     const { id } = request.params;
     const body = request.body;
     const item = new Item(body.name);
     const box = await this.boxService.addItem(id, item);
-    response.status(201).json(box);
+    return this.ok(box);
   }
 }

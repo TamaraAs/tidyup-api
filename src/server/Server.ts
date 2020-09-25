@@ -5,6 +5,7 @@ import express, { Application, Request, Response, NextFunction, RequestHandler, 
 import { Container } from 'inversify';
 import { METADATA_KEY, TYPE } from './constants';
 import { ControllerMetadata, ControllerMethodMetadata, Newable, ProviderMetadata } from './interfaces';
+import { HttpResponse } from './http-response';
 
 // TODO: Utilidades de sistema, no deben estar aqui.
 const pify = <T>(fn) => (...args) =>
@@ -104,11 +105,25 @@ export class Server {
   private createHandler(controller: Newable, key: string): RequestHandler {
     return async (request: Request, response: Response, next: NextFunction) => {
       try {
-        return await controller[key](request, response, next);
+        const returnedValue = await controller[key](request, response, next);
+        if (returnedValue instanceof HttpResponse) {
+          await this.handleHttpResponse(returnedValue, response);
+        } else if (!response.headersSent) {
+          response.json(returnedValue);
+        }
       } catch (error) {
         next(error);
       }
     };
+  }
+
+  private async handleHttpResponse(httpResponse: HttpResponse<unknown | never>, response: Response) {
+    if (httpResponse.content !== undefined) {
+      response.setHeader('content-type', 'application/json');
+      response.status(httpResponse.statusCode).send(httpResponse.content);
+    } else {
+      response.sendStatus(httpResponse.statusCode);
+    }
   }
 
   private createNotFoundMiddleware(): RequestHandler {
