@@ -19,8 +19,13 @@ export interface ControllerMethodMetadata {
   method: string;
   propertyKey: string;
   target: Newable;
+  configurationPath: ConfigurationPath;
 }
 
 export interface HttpActionResult<T = unknown> {
   executeAsync(): Promise<HttpResponse<T>>;
+}
+
+export interface ConfigurationPath {
+  contentType?: string;
 }

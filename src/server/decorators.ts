@@ -5,7 +5,8 @@ import {
   ControllerMetadata,
   ControllerMethodMetadata,
   ServiceIdentifier,
-  ProviderMetadata
+  ProviderMetadata,
+  ConfigurationPath
 } from './interfaces';
 
 export const controller = (path = '') => {
@@ -21,33 +22,33 @@ export const controller = (path = '') => {
   };
 };
 
-export const httpGet = (path?: string): MethodDecorator => {
-  return httpMethod('get', path);
+export const httpGet = (path?: string, configuration?: ConfigurationPath): MethodDecorator => {
+  return httpMethod('get', path, configuration);
 };
 
-export const httpPost = (path?: string): MethodDecorator => {
-  return httpMethod('post', path);
+export const httpPost = (path?: string, configuration?: ConfigurationPath): MethodDecorator => {
+  return httpMethod('post', path, configuration);
 };
 
-export const httpPut = (path?: string): MethodDecorator => {
-  return httpMethod('put', path);
+export const httpPut = (path?: string, configuration?: ConfigurationPath): MethodDecorator => {
+  return httpMethod('put', path, configuration);
 };
 
-export const httpPatch = (path?: string): MethodDecorator => {
-  return httpMethod('patch', path);
+export const httpPatch = (path?: string, configuration?: ConfigurationPath): MethodDecorator => {
+  return httpMethod('patch', path, configuration);
 };
 
-export const httpHead = (path?: string): MethodDecorator => {
-  return httpMethod('head', path);
+export const httpHead = (path?: string, configuration?: ConfigurationPath): MethodDecorator => {
+  return httpMethod('head', path, configuration);
 };
 
-export const httpDelete = (path?: string): MethodDecorator => {
-  return httpMethod('delete', path);
+export const httpDelete = (path?: string, configuration?: ConfigurationPath): MethodDecorator => {
+  return httpMethod('delete', path, configuration);
 };
 
-export const httpMethod = (method: string, path = ''): MethodDecorator => {
+export const httpMethod = (method: string, path = '', configurationPath: ConfigurationPath = {}): MethodDecorator => {
   return (target: Newable, propertyKey: string): void => {
-    const metadata: ControllerMethodMetadata = { method, path, target, propertyKey };
+    const metadata: ControllerMethodMetadata = { method, path, target, propertyKey, configurationPath };
     const metadataList: ControllerMethodMetadata[] =
       Reflect.getMetadata(METADATA_KEY.controllerMethod, target.constructor) || [];
     metadataList.push(metadata);

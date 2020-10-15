@@ -4,7 +4,13 @@ import bodyParser from 'body-parser';
 import express, { Application, Request, Response, NextFunction, RequestHandler, Router } from 'express';
 import { Container } from 'inversify';
 import { METADATA_KEY, TYPE } from './constants';
-import { ControllerMetadata, ControllerMethodMetadata, Newable, ProviderMetadata } from './interfaces';
+import {
+  ConfigurationPath,
+  ControllerMetadata,
+  ControllerMethodMetadata,
+  Newable,
+  ProviderMetadata
+} from './interfaces';
 import { HttpResponse } from './http-response';
 
 // TODO: Utilidades de sistema, no deben estar aqui.
@@ -80,7 +86,11 @@ export class Server {
       const controllerMethodMetadata = this.getControllerMethodMetadata(controller.constructor);
 
       controllerMethodMetadata.forEach((metadata) => {
-        const handler: RequestHandler = this.createHandler(controller, metadata.propertyKey);
+        const handler: RequestHandler = this.createHandler(
+          controller,
+          metadata.propertyKey,
+          metadata.configurationPath
+        );
         this.router[metadata.method](`${controllerInstanceMetadata.path}${metadata.path}`, handler);
         // TODO: Añadir logica para establecer metodos no permitidos al termino del registro.
         //this.router.all(`${controllerInstanceMetadata.path}${metadata.path}`, this.createMethodNotAllowedMiddleware());
@@ -102,8 +112,15 @@ export class Server {
     return Reflect.getMetadata(METADATA_KEY.controllerMethod, target);
   }
 
-  private createHandler(controller: Newable, key: string): RequestHandler {
+  private createHandler(controller: Newable, key: string, configuration: ConfigurationPath): RequestHandler {
     return async (request: Request, response: Response, next: NextFunction) => {
+      const acceptHeader: string = request.headers['accept'] || 'text/plain';
+      const returnContentType: string = configuration.contentType || 'application/json';
+      if (acceptHeader !== returnContentType) {
+        next();
+        return;
+      }
+
       try {
         const returnedValue = await controller[key](request, response, next);
         if (returnedValue instanceof HttpResponse) {

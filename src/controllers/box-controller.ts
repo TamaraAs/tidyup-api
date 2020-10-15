@@ -28,18 +28,19 @@ export class BoxController extends BaseController {
   }
 
   @httpGet('/:id')
-  public async getById(request: Request, response: Response): Promise<HttpActionResult | void> {
-    const accept: string = request.headers['accept'];
+  public async getById(request: Request): Promise<HttpActionResult | void> {
     const { id } = request.params;
     const box = await this.boxService.findById(id);
-    if (accept === 'application/json') {
-      return this.ok(box);
-    } else if (accept === 'image/png') {
-      const qrcode = await toBuffer(box.getId());
-      response.end(qrcode);
-    } else {
-      response.status(406).send();
-    }
+    return this.ok(box);
+  }
+
+  @httpGet('/:id', { contentType: 'image/png' })
+  public async getImageById(request: Request, response: Response): Promise<HttpActionResult | void> {
+    const { id } = request.params;
+    const box = await this.boxService.findById(id);
+    // TODO: Encapsular libreria de 3os
+    const qrcode = await toBuffer(box.getId());
+    response.end(qrcode);
   }
 
   @httpPut('/:id/items')
