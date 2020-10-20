@@ -1,9 +1,8 @@
-import { readdir, stat, Stats } from 'fs';
-import { resolve } from 'path';
 import bodyParser from 'body-parser';
 import express, { Application, Request, Response, NextFunction, RequestHandler, Router } from 'express';
 import { Container } from 'inversify';
 import { METADATA_KEY, TYPE } from './constants';
+import { walk } from '../utils/fs';
 import {
   ConfigurationPath,
   ControllerMetadata,
@@ -12,31 +11,6 @@ import {
   ProviderMetadata
 } from './interfaces';
 import { HttpResponse } from './http-response';
-
-// TODO: Utilidades de sistema, no deben estar aqui.
-const pify = <T>(fn) => (...args) =>
-  new Promise<T>((resolve, reject) => {
-    fn(...args, (err: NodeJS.ErrnoException | null, result: T) => (err ? reject(err) : resolve(result)));
-  });
-const readDir = pify<string[]>(readdir);
-const statPath = pify<Stats>(stat);
-const walk = async (dir: string): Promise<string[]> => {
-  let resultList: string[] = [];
-  const files = await readDir(dir);
-  await Promise.all(
-    files.map(async (file) => {
-      const resolvedFile = resolve(`${dir}/${file}`);
-      const stats = await statPath(resolvedFile);
-      if (stats.isDirectory()) {
-        const walkResult = await walk(resolvedFile);
-        resultList = [...resultList, ...walkResult];
-      } else {
-        resultList = [...resultList, resolvedFile];
-      }
-    })
-  );
-  return resultList;
-};
 
 export class Server {
   private container: Container;
