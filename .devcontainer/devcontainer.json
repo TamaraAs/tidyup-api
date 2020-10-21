@@ -1,0 +1,12 @@
+{
+  "dockerComposeFile": "docker-compose.yaml",
+  "service": "develop",
+  "workspaceFolder": "/workspace",
+  "extensions": [
+    "mongodb.mongodb-vscode",
+    "dbaeumer.vscode-eslint",
+    "eg2.vscode-npm-script",
+    "humao.rest-client"
+  ],
+  "forwardPorts": [3000]
+}
