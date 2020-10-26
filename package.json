@@ -17,7 +17,7 @@
   "license": "ISC",
   "main": "./dist/index.js",
   "scripts": {
-    "list": "eslint --ext .ts src",
+    "inspect:lint": "eslint --ext .ts src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
